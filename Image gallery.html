@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Gallery</title>
+  <h1> Image Gallery </h1>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .gallery-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gallery-item {
+      width: 200px;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 80%;
+    }
+
+    .modal img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 50%;
+    }
+
+    .modal-navigation {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: none;
+      border-radius: 50%;
+    }
+
+    .modal-prev {
+      left: 10px;
+    }
+
+    .modal-next {
+      right: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Gallery -->
+  <div class="gallery-container">
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdz3H7CM67HpoNy8W9ftaVkiiJXbkoVKTKgA&s" alt="Image 1">
+    </div>
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD7KL_jh5n6KcgWm15pAQxjwByLTXo4lix5Q&s"alt="Image 2">
+    </div>
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_U_Soc6udpjfKdOUyL2yJfSviYobrKNZ16g&s" alt="Image 3">
+    </div>
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5BPxTh0-KcKrmsA3p-lXaj6gJ_Plfs0x9K2lQZuN50YvXnMu2c5bD6HNXPEjpbBTKkL8&usqp=CAU" alt="Image 4">
+    </div>
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6npYRF_PB68xF-faTJR_yVeCDRoCLb3Tq-A&s" alt="Image 5">
+    </div>
+    <div class="gallery-item">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnsfni8kaQ_03xg5lDrvW032cHX91EZXLRHA&s" alt="Image 6">
+    </div>
+  </div>
+
+  <!-- Modal for viewing images in full-screen -->
+  <div class="modal" id="imageModal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <button class="modal-navigation modal-prev" id="prevBtn">&#10094;</button>
+    <button class="modal-navigation modal-next" id="nextBtn">&#10095;</button>
+    <div class="modal-content">
+      <img src="" alt="Full Image" id="modalImage">
+    </div>
+  </div>
+
+  <script>
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalClose = document.getElementById('modalClose');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let currentIndex = 0;
+    let images = [];
+
+    // Collect image URLs from the gallery
+    galleryItems.forEach(item => {
+      const img = item.querySelector('img');
+      images.push(img.src);
+    });
+
+    // Open modal with selected image
+    galleryItems.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        currentIndex = index;
+        modalImage.src = images[currentIndex];
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Close modal
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    // Show previous image
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
+      modalImage.src = images[currentIndex];
+    });
+
+    // Show next image
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex === images.length - 1) ? 0 : currentIndex + 1;
+      modalImage.src = images[currentIndex];
+    });
+
+    // Close modal when clicking outside the image
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
